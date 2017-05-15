@@ -1,0 +1,8 @@
+<%= form_for(Video.new, url: api_v1_videos_url(format: "json")) do |f| %>
+  <%= f.file_field :video %><br/>
+  <%= f.label :start_time %><br/>
+  <%= f.text_field :start_time %><br/>
+  <%= f.label :end_time %><br/>
+  <%= f.text_field :end_time %><br/>
+  <%= f.submit "Trim and save" %>
+<% end %>

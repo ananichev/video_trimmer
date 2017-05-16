@@ -7,16 +7,17 @@ module V1
     end
 
     def create
-      video = Video.new(duration_params)
-      video.video = video_param
-      video.save
+      video = Video.new(video_params)
 
-      respond_to do |format|
-        format.json { render json: { status: :ok } }
+      if video.valid? && video.save
+        render json: { status: :ok }
+      else
+        render json: { errors: video.errors.full_messages }, status: 422
       end
     end
 
     def show
+      # video: video.as_json(only: [:duration, :status], methods: :url)
     end
 
     def edit
@@ -30,12 +31,8 @@ module V1
 
     private
 
-    def video_param
-      params.require(:video).permit(:video)[:video]
-    end
-
-    def duration_params
-      params.require(:video).permit(:start_time, :end_time)
+    def video_params
+      params.require(:video).permit(:video, :start_time, :end_time)
     end
   end
 end

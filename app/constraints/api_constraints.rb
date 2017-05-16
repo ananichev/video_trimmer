@@ -6,6 +6,6 @@ class ApiConstraints
   end
 
   def matches?(request)
-    request.path =~ /v#{version}/i
+    request.path =~ /v#{version}/i && request.format.json?
   end
 end

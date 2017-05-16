@@ -6,3 +6,10 @@
   <%= f.text_field :end_time %><br/>
   <%= f.submit "Trim and save" %>
 <% end %>
+
+
+<% Video.all.each do |v| %>
+  <%= link_to v.url, v.url %>|
+  <%= v.status %>|
+  <%= v.duration %><br/>
+<% end %>

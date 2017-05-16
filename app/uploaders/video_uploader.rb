@@ -1,9 +1,6 @@
 # encoding: utf-8
 
 class VideoUploader < CarrierWave::Uploader::Base
-
-  include CarrierWaveProcessors::VideoTrimmer
-
   # Choose what kind of storage to use for this uploader:
   storage :file
   # storage :fog
@@ -17,8 +14,6 @@ class VideoUploader < CarrierWave::Uploader::Base
   def cache_dir
     "cache_uploads/#{model.class.to_s.underscore}/#{mounted_as}/#{model.id}"
   end
-
-  process :trim_video
 
   # Provide a default URL as a default if there hasn't been a file uploaded:
   # def default_url
@@ -51,5 +46,4 @@ class VideoUploader < CarrierWave::Uploader::Base
   # def filename
   #   "something.jpg" if original_filename
   # end
-
 end

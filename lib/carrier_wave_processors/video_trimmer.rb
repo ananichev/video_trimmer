@@ -1,15 +1,11 @@
 module CarrierWaveProcessors
-  module VideoTrimmer
-    extend ActiveSupport::Concern
-
-    class_methods do
-      def trim_video
-        process :trim_video
-      end
-    end
-
+  class VideoTrimmer < Struct.new(:video)
     def trim_video
-      byebug
+      current_path = Rails.root.join('public', video.video.store_path).to_s
+      new_path = current_path.sub(/\.(.*)\z/, '') + '_trimmed.' + $1
+
+      video.status = 'scheduled'
+      TrimVideoJob.perform_later(current_path, new_path, video.id.to_s)
     end
   end
 end

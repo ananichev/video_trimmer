@@ -1,5 +1,5 @@
 module V1
-  class VideosController < ApplicationController
+  class VideosController < BaseApiController
     def index
     end
 
@@ -10,9 +10,9 @@ module V1
       video = Video.new(video_params)
 
       if video.valid? && video.save
-        render json: { status: :ok }
+        render json: { success: true }
       else
-        render json: { errors: video.errors.full_messages }, status: 422
+        render json: { error: { message: video.errors.full_messages, code: 422 } }, status: 422
       end
     end
 

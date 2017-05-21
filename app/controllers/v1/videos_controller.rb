@@ -6,6 +6,7 @@ module V1
 
     def create
       @video = current_user.videos.build(video_params)
+      @video.processing_delay = params[:processing_delay] # just for testing
       @video.save ? render(:show) : render_error(@video.errors.full_messages)
     end
 

@@ -2,6 +2,8 @@ class Video
   include Mongoid::Document
   include Mongoid::Timestamps
 
+  attr_accessor :processing_delay
+
   ALLOWED_STATUSES = %w(done failed scheduled processing)
 
   mount_uploader :video, VideoUploader
@@ -46,6 +48,6 @@ class Video
   end
 
   def trim_video
-    Processors::VideoTrimmer.new(self).trim_video
+    Processors::VideoTrimmer.new(self, processing_delay).trim_video
   end
 end

@@ -1,32 +1,38 @@
-<span id='response'></span>
+<span id="response"></span>
 
 <%= form_for(Video.new, url: api_v1_videos_url(format: "json"), remote: true) do |f| %>
   <%= f.file_field :video %><br/>
-  <%= hidden_field_tag :token, 'simple_token' %><br/>
+  <%= hidden_field_tag :token, "simple_token" %><br/>
   <%= f.label :start_time %><br/>
   <%= f.text_field :start_time %><br/>
   <%= f.label :end_time %><br/>
   <%= f.text_field :end_time %><br/>
+  <%= label_tag :processing_delay %><br/>
+  <%= text_field_tag :processing_delay, 0 %><br/>
+
   <%= f.submit "Trim and save" %>
 <% end %>
 
-<ul id="video_list">
-  <% current_user.videos.each do |video| %>
-    <li>
-      <%= link_to video.name, video.url %>|
-      <%= video.status %>|
-      <%= video.duration %>|
-      <%= button_tag 'Update status', class: :update_status_button, data: { url: api_v1_video_url(video, format: "json") } %>
-    </li>
-  <% end %>
-</ul>
+<div id="video_list">
+  <ul>
+    <% current_user.videos.each do |video| %>
+      <li>
+        <%= link_to video.name, video.url %>|
+        <%= video.status %>|
+        <%= video.duration %>|
+        <%= button_tag "Update status", class: :update_status_button, data: { url: api_v1_video_url(video, format: "json") } %>
+      </li>
+    <% end %>
+  </ul>
+</div>
 
-<script defer>
+<script>
   $(document).ready(function() {
     var videoItem = function(video) {
       return('<li><a href="' + video.url + '">' + video.name + '</a>| '
              + video.status + '| ' + video.duration +
-             '| <button name="button" type="submit" id="update_status_button">Update status</button></li>')
+             '| <button name="button" type="submit" class="update_status_button" data-url="http://localhost:3000/v1/videos/'+ video.id
+             +'.json">Update status</button></li>')
     }
 
     $('#new_video').on('submit', function() {
@@ -41,7 +47,7 @@
         type: 'POST'
       }).done(function(response) {
         $('#response').hide().text(JSON.stringify(response)).fadeIn('slow').delay(3000).hide(1);
-        $('#video_list').append(videoItem(response.video))
+        $('#video_list ul').append(videoItem(response.video))
       }).fail(function(response) {
         $('#response').hide().text(response.responseText).fadeIn('slow').delay(3000).hide(1)
       });
@@ -49,9 +55,10 @@
       return false
     });
 
-    $('.update_status_button').on('click', function() {
+    $('#video_list').on('click', '.update_status_button', function() {
       var $this = $(this);
-      $.get($this.data('url'), { token: "simple_token" }).done(function(response) {
+
+      $.get($this.data('url'), { token: 'simple_token' }).done(function(response) {
         $this.parent().replaceWith(videoItem(response.video))
       })
     })

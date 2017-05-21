@@ -16,7 +16,7 @@ class Video
   belongs_to :user, inverse_of: :videos
 
   validates :status, inclusion: { in: ALLOWED_STATUSES }, allow_nil: true
-  validates :video, presence: true
+  validates :video, :start_time, :end_time, presence: true
   validate  :duration_correctness
 
   before_create :trim_video

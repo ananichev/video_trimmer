@@ -2,7 +2,7 @@ class Video
   include Mongoid::Document
   include Mongoid::Timestamps
 
-  attr_accessor :processing_delay
+  attr_accessor :processing_delay, :force_error
 
   ALLOWED_STATUSES = %w(done failed scheduled processing)
 
@@ -29,6 +29,10 @@ class Video
     video.file.filename
   end
 
+  def retry!
+    trim_video && save
+  end
+
   ALLOWED_STATUSES.each do |status|
     define_method "#{status}?" do
       self.status == status
@@ -48,6 +52,8 @@ class Video
   end
 
   def trim_video
-    Processors::VideoTrimmer.new(self, processing_delay).trim_video
+    # Options for testing API
+    options = { processing_delay: processing_delay, force_error: force_error }
+    Processors::VideoTrimmer.new(self, options).call
   end
 end

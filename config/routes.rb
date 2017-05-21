@@ -7,6 +7,8 @@ Rails.application.routes.draw do
   end
 
   api_version(1) do
-    resources :videos
+    resources :videos do
+      get :retry, on: :member
+    end
   end
 end

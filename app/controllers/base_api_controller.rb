@@ -1,5 +1,6 @@
 class BaseApiController < ApplicationController
   before_action :authenticate_user_from_token
+  attr_reader :current_user
 
   private
 
@@ -8,9 +9,7 @@ class BaseApiController < ApplicationController
     render(json: { error: { message: 'Invalid Credentials', code: 401} }, status: 401) unless @current_user
   end
 
-  helper_method :current_user
-
-  def current_user
-    @current_user
+  def render_error(errors)
+    render json: { error: { message: errors, code: 422 } }, status: 422
   end
 end

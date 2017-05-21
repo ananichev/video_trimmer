@@ -11,6 +11,8 @@ class Video
   field :end_time
   field :status
 
+  belongs_to :user, inverse_of: :videos
+
   validates :status, inclusion: { in: ALLOWED_STATUSES }, allow_nil: true
   validates :video, presence: true
   validate  :duration_correctness
@@ -19,6 +21,10 @@ class Video
 
   def url
     done? ? video.url.sub(/\.(.*)\z/, '') + '_trimmed.' + $1 : video.url
+  end
+
+  def name
+    video.file.filename
   end
 
   ALLOWED_STATUSES.each do |status|
@@ -40,6 +46,6 @@ class Video
   end
 
   def trim_video
-    CarrierWaveProcessors::VideoTrimmer.new(self).trim_video
+    Processors::VideoTrimmer.new(self).trim_video
   end
 end

@@ -1,5 +1,8 @@
-<%= form_for(Video.new, url: api_v1_videos_url(format: "json")) do |f| %>
+<span id='response'></span>
+
+<%= form_for(Video.new, url: api_v1_videos_url(format: "json"), remote: true) do |f| %>
   <%= f.file_field :video %><br/>
+  <%= hidden_field_tag :token, 'simple_token' %><br/>
   <%= f.label :start_time %><br/>
   <%= f.text_field :start_time %><br/>
   <%= f.label :end_time %><br/>
@@ -7,9 +10,50 @@
   <%= f.submit "Trim and save" %>
 <% end %>
 
+<ul id="video_list">
+  <% current_user.videos.each do |video| %>
+    <li>
+      <%= link_to video.name, video.url %>|
+      <%= video.status %>|
+      <%= video.duration %>|
+      <%= button_tag 'Update status', class: :update_status_button, data: { url: api_v1_video_url(video, format: "json") } %>
+    </li>
+  <% end %>
+</ul>
 
-<% Video.all.each do |v| %>
-  <%= link_to v.url, v.url %>|
-  <%= v.status %>|
-  <%= v.duration %><br/>
-<% end %>
+<script defer>
+  $(document).ready(function() {
+    var videoItem = function(video) {
+      return('<li><a href="' + video.url + '">' + video.name + '</a>| '
+             + video.status + '| ' + video.duration +
+             '| <button name="button" type="submit" id="update_status_button">Update status</button></li>')
+    }
+
+    $('#new_video').on('submit', function() {
+      var $this = $(this),
+          formData = new FormData(this);
+
+      $.ajax({
+        url: $this.attr('action'),
+        data: formData,
+        processData: false,
+        contentType: false,
+        type: 'POST'
+      }).done(function(response) {
+        $('#response').hide().text(JSON.stringify(response)).fadeIn('slow').delay(3000).hide(1);
+        $('#video_list').append(videoItem(response.video))
+      }).fail(function(response) {
+        $('#response').hide().text(response.responseText).fadeIn('slow').delay(3000).hide(1)
+      });
+
+      return false
+    });
+
+    $('.update_status_button').on('click', function() {
+      var $this = $(this);
+      $.get($this.data('url'), { token: "simple_token" }).done(function(response) {
+        $this.parent().replaceWith(videoItem(response.video))
+      })
+    })
+  });
+</script>

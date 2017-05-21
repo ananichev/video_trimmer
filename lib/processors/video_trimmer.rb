@@ -1,4 +1,4 @@
-module CarrierWaveProcessors
+module Processors
   class VideoTrimmer < Struct.new(:video)
     def trim_video
       current_path = Rails.root.join('public', video.video.store_path).to_s

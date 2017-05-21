@@ -1,32 +1,16 @@
 module V1
   class VideosController < BaseApiController
     def index
-    end
-
-    def new
+      @videos = current_user.videos
     end
 
     def create
-      video = Video.new(video_params)
-
-      if video.valid? && video.save
-        render json: { success: true }
-      else
-        render json: { error: { message: video.errors.full_messages, code: 422 } }, status: 422
-      end
+      @video = current_user.videos.build(video_params)
+      @video.save ? render(:show) : render_error(@video.errors.full_messages)
     end
 
     def show
-      # video: video.as_json(only: [:duration, :status], methods: :url)
-    end
-
-    def edit
-    end
-
-    def update
-    end
-
-    def destroy
+      @video = Video.find(params[:id])
     end
 
     private

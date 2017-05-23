@@ -1,24 +1,5 @@
-# README
+# API Video Trimmer 
 
-This README would normally document whatever steps are necessary to get the
-application up and running.
+Simple API for trimming video.
 
-Things you may want to cover:
-
-* Ruby version
-
-* System dependencies
-
-* Configuration
-
-* Database creation
-
-* Database initialization
-
-* How to run the test suite
-
-* Services (job queues, cache servers, search engines, etc.)
-
-* Deployment instructions
-
-* ...
+**NOTE!** It requires [ffmpeg](https://ffmpeg.org/) - tool for converting video files.
